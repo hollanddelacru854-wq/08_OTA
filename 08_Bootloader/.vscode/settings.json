@@ -1,3 +1,5 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Admin1/Desktop/KeilProject32/Learn_Code/08_bootloader_code/08_Bootloader/Drivers/CMSIS/NN"
+    "files.associations": {
+        "usart.h": "c"
+    }
 }

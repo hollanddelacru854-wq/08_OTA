@@ -1,7 +1,9 @@
-;********************************************************************************
+;/******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32f411xe.s
 ;* Author             : MCD Application Team
-;* Description        : STM32F411xExx devices vector table for EWARM toolchain.
+;* @version           : V1.8.0
+;* @date              : 09-November-2016
+;* Description        : STM32F401xx devices vector table for EWARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == _iar_program_start,
@@ -12,17 +14,21 @@
 ;*                        calls main()).
 ;*                      After Reset the Cortex-M4 processor is in Thread mode,
 ;*                      priority is Privileged, and the Stack is set to Main.
-;*******************************************************************************
-;* @attention
-;*
-;* Copyright (c) 2017 STMicroelectronics.
-;* All rights reserved.
-;*
-;* This software is licensed under terms that can be found in the LICENSE file
-;* in the root directory of this software component.
-;* If no LICENSE file comes with this software, it is provided AS-IS.
-;*
-;*******************************************************************************
+;********************************************************************************
+;* 
+;* Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+;* You may not use this file except in compliance with the License.
+;* You may obtain a copy of the License at:
+;* 
+;*        http://www.st.com/software_license_agreement_liberty_v2
+;* 
+;* Unless required by applicable law or agreed to in writing, software 
+;* distributed under the License is distributed on an "AS IS" BASIS, 
+;* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;* See the License for the specific language governing permissions and
+;* limitations under the License.
+;* 
+;*******************************************************************************/
 ;
 ;
 ; The modules in this file are included in the libraries, and may be replaced
@@ -504,3 +510,4 @@ SPI5_IRQHandler
         B SPI5_IRQHandler
         
         END
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

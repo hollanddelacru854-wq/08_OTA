@@ -1,260 +1,132 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
+	WeAct ÂæÆË°åÂàõÊñ∞ 
+	>> Ê†áÂáÜÂ∫ìÂÆû‰æã‰æãÁ®ã
   ******************************************************************************
   */
-/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usart.h"
-#include "gpio.h"
+#include "tim.h"
+#include "Gpio.h"
+#include "Debug.h"
+#include "elog.h"
+#include "Boot_Manager.h"
+#include "USART.h"
+#include "Flash.h"
+#include "Ymodem.h"
+// ÂÖ®Â±ÄÂÆö‰πâ STM32F411xE ÊàñËÄÖ STM32F401xx
+// ÂΩìÂâçÂÆö‰πâ STM32F411xE
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-#include "stdio.h"
-/* USER CODE END Includes */
+// STM32F411 Â§ñÈÉ®Êô∂ÊåØ25MhzÔºåËÄÉËôëÂà∞USB‰ΩøÁî®ÔºåÂÜÖÈÉ®È¢ëÁéáËÆæÁΩÆ‰∏∫96Mhz
+// ÈúÄË¶Å100mhz,Ëá™Ë°å‰øÆÊîπsystem_stm32f4xx.c
+
+/** @addtogroup Template_Project
+  * @{
+  */
 
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-//APP‘⁄Flash÷–µƒ∆ ºµÿ÷∑
-#define APP_FLASH_ADDR 0x8019000
-
-//Ω´Ω” ’void∑µªÿvoidµƒ∫Ø ˝∆±√˚Œ™pFunction
-typedef void (*pFunction)(void);
-/* USER CODE END PTD */
-
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
 /* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
-//Ω” ’APPµƒReset_Handlerµƒ∫Ø ˝÷∏’Î
-static pFunction JumpToApplication;
-/* USER CODE END PV */
+static __IO uint32_t uwTimingDelay;
+RCC_ClocksTypeDef RCC_Clocks;
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
- #ifdef __GNUC__
-     #define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
- #else
-     #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
- #endif /* __GNUC__*/
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
- PUTCHAR_PROTOTYPE
- {
-     HAL_UART_Transmit(&huart1, (uint8_t *)&ch,1,0xFFFF);
-     return ch;
- }
- 
- 
- //—” ±∫Ø ˝£¨ª˘”⁄HCLK∆µ¬ 
- void delay(volatile uint32_t count)
-{
-	while(count--)
-	{
-		//ø’—≠ª∑£¨œ˚∫ƒ ±º‰
-	}
-}
-
-
-//∏˘æ›HCLK 100MHZ º∆À„—” ±£®”√”⁄—” ±∑Ω±„”√√¸¡ÓΩ¯»Î…˝º∂ƒ£ Ω£©
-void delay_seconds(uint32_t seconds)
-{
-	uint32_t count = 100000000;
-	for(uint32_t i = 0;i < seconds;i++)
-	{
-		delay(count);//µ˜”√—” ±
-	}
-}
-
-
-void DisablePeripherals(void)
-{
-        //HAL_UART_DeInit(&huart1);
-        
-        //πÿ±’RTC ±÷”
-        __HAL_RCC_RTC_DISABLE();
-        
-        //Ω˚”√÷–∂œ
-        __disable_irq();
-}
-
-void JumpToApp(void)
-{
-	uint16_t i;
-	uint32_t jumpAddr,armAddr;
-	//∂¡»°APP«∞4∏ˆ◊÷Ω⁄ ˝æ›
-	armAddr=*(uint32_t *)APP_FLASH_ADDR;
-	
-	//—” ±£¨»Áπ˚“™…˝º∂∑Ω±„”√√¸¡ÓΩ¯»Î…˝º∂ƒ£ Ω
-	delay_seconds(2);
-	for(i=0;i<500;++i)
-	{
-		printf("bootloader running...\r\n");
-	}
-	delay_seconds(1);
-	
-	
-	//–£—È’ª∂•÷∏’Î «∑ÒŒª”⁄APP_FLASH_ADDRŒª÷√
-	if (((*(__IO uint32_t*)APP_FLASH_ADDR) & 0x2FFE0000 ) == 0x20000000)
-	{
-			// ªÒ»°”¶”√≥Ã–Úµƒ»Îø⁄µÿ÷∑£®∏¥ŒªœÚ¡ø£©
-			jumpAddr = *(__IO uint32_t*) (APP_FLASH_ADDR + 4); //PC÷∏’Îµÿ÷∑
-		
-			// Ω´∫Ø ˝÷∏’Î.-”¶”√≥Ã–Úµƒ»Îø⁄µÿ÷∑
-			JumpToApplication=(pFunction)jumpAddr;
-		
-			// …Ë÷√’ª∂•÷∏’ÎŒ™”¶”√≥Ã–Úµƒ≥ı º÷µ
-			__set_MSP(*(__IO uint32_t*) APP_FLASH_ADDR);
-		
-			// Ã¯◊™µΩ”¶”√≥Ã–Ú£¨ø™ º÷¥––
-			JumpToApplication();
-	}
-	return;
-}
- 
- 
- 
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
+/* Private functions ---------------------------------------------------------*/
+ /*
+  *power by WeAct Studio
+  *The board with `WeAct` Logo && `version number` is our board, quality guarantee. 
+  *For more information please visit: https://github.com/WeActTC/MiniF4-STM32F4x1
+  *Êõ¥Â§ö‰ø°ÊÅØËØ∑ËÆøÈóÆÔºöhttps://gitee.com/WeActTC/MiniF4-STM32F4x1
   */
+/**
+  * @brief  Main program
+  * @param  None
+  * @retval None
+  */
+uint8_t au8_test[1024]; 
 int main(void)
 {
+	/* Enable Clock Security System(CSS): this will generate an NMI exception
+     when HSE clock fails *****************************************************/
+  RCC_ClockSecuritySystemCmd(ENABLE);
+	
+ /*!< At this stage the microcontroller clock setting is already configured, 
+       this is done through SystemInit() function which is called from startup
+       files before to branch to application main.
+       To reconfigure the default setting of SystemInit() function, 
+       refer to system_stm32f4xx.c file */
 
-  /* USER CODE BEGIN 1 */
-  //…Ë÷√÷–∂œœÚ¡ø±ÌµƒŒª÷√
-  SCB->VTOR=0x8000000 | 0x0;
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
-  /* USER CODE BEGIN 2 */
-  DisablePeripherals();
-  JumpToApp();
-  /* USER CODE END 2 */
-
+  /* SysTick end of count event each 1ms */
+  SystemCoreClockUpdate();
+  RCC_GetClocksFreq(&RCC_Clocks);
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+  
+	
+  /* Add your application code here */
+  /* Insert 50 ms delay */
+  Delay(50);
+	Key_IO_Init();
+	Led_IO_Init();
+  TIM_Config();
+	USART1_Init();
+	
+	Ymodem_Receive(au8_test);
+	
+	app_elog_init();
+	
+	log_a("Hello LiXin");
+	
+  Delay(10);
+  //JumpToApp();
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+		//Â¶ÇÊûúÊòØÊåâ‰∏ãÔºåÂàôLedÁøªËΩ¨
+		if(Key_Scan())
+		{
+			//log_a("LED ON");
+			USART_SendChar(USART1,'A');
+			LED_ON;
+		}
+		else
+		{
+			USART_SendChar(USART1,'B');
+			//log_a("LED OFF");
+			LED_OFF;
+		}
+	}
 }
 
 /**
-  * @brief System Clock Configuration
+  * @brief  Inserts a delay time.
+  * @param  nTime: specifies the delay time length, in milliseconds.
   * @retval None
   */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+void Delay(__IO uint32_t nTime)
+{ 
+  uwTimingDelay = nTime;
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 100;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  while(uwTimingDelay != 0);
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
+  * @brief  Decrements the TimingDelay variable.
+  * @param  None
   * @retval None
   */
-void Error_Handler(void)
+void TimingDelay_Decrement(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
+  if (uwTimingDelay != 0x00)
+  { 
+    uwTimingDelay--;
   }
-  /* USER CODE END Error_Handler_Debug */
 }
-#ifdef USE_FULL_ASSERT
+
+#ifdef  USE_FULL_ASSERT
+
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -262,11 +134,21 @@ void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
+void assert_failed(uint8_t* file, uint32_t line)
+{ 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+
+  /* Infinite loop */
+  while (1)
+  {
+  }
 }
-#endif /* USE_FULL_ASSERT */
+#endif
+
+/**
+  * @}
+  */
+
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

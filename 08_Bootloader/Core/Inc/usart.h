@@ -1,52 +1,37 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file    usart.h
-  * @brief   This file contains all the function prototypes for
-  *          the usart.c file
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+/******************************************************************************
+ * Copyright (C) 2024 EternalChip, Inc.(Gmbh) or its affiliates.
+ * 
+ * All Rights Reserved.
+ * 
+ * @file Flash.c
+ * 
+ * @par dependencies 
+ * - Flash.h
+ * 
+ * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
+ * 
+ * @brief Functions related to reading and writing in the chip's flash area.
+ * 
+ * Processing flow:
+ * 
+ * call directly.
+ * 
+ * @version V1.0 2024-09-13
+ *
+ * @note 1 tab == 4 spaces!
+ * 
+ *****************************************************************************/
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USART_H__
-#define __USART_H__
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef __USART_H
+#define __USART_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-extern UART_HandleTypeDef huart1;
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
-
-void MX_USART1_UART_Init(void);
-
-/* USER CODE BEGIN Prototypes */
-
-/* USER CODE END Prototypes */
-
-#ifdef __cplusplus
-}
+#include "stm32f4xx.h"
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
+extern void USART1_Init(void);
+extern void USART_SendChar(USART_TypeDef* USARTx, uint8_t data);
+extern uint8_t USART_ReceiveChar(USART_TypeDef* USARTx);
 #endif
-
-#endif /* __USART_H__ */
-

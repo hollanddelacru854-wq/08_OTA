@@ -1,49 +1,45 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file    gpio.h
-  * @brief   This file contains all the function prototypes for
-  *          the gpio.c file
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+/******************************************************************************
+ * Copyright (C) 2024 EternalChip, Inc.(Gmbh) or its affiliates.
+ * 
+ * All Rights Reserved.
+ * 
+ * @file Flash.c
+ * 
+ * @par dependencies 
+ * - Flash.h
+ * 
+ * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
+ * 
+ * @brief Functions related to reading and writing in the chip's flash area.
+ * 
+ * Processing flow:
+ * 
+ * call directly.
+ * 
+ * @version V1.0 2024-09-13
+ *
+ * @note 1 tab == 4 spaces!
+ * 
+ *****************************************************************************/
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __GPIO_H__
-#define __GPIO_H__
+#ifndef __GPIO_H
+#define __GPIO_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#define LED_C13_PORT GPIOC
+#define LED_C13_PIN  GPIO_Pin_13
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx.h"
 #include "main.h"
+//#include "Systim.h"
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+#define LED_OFF    GPIO_SetBits(LED_C13_PORT,LED_C13_PIN);
+#define LED_ON     GPIO_ResetBits(LED_C13_PORT,LED_C13_PIN);
+/* Exported functions ------------------------------------------------------- */
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
-
-void MX_GPIO_Init(void);
-
-/* USER CODE BEGIN Prototypes */
-
-/* USER CODE END Prototypes */
-
-#ifdef __cplusplus
-}
-#endif
-#endif /*__ GPIO_H__ */
-
+extern void Key_IO_Init(void);
+extern uint8_t Key_Scan(void);
+extern void Led_IO_Init(void);
+extern void Breathing_light(void);
+#endif /* __GPIO_H */
