@@ -70,17 +70,19 @@ int main(void)
   Delay(50);
 	Key_IO_Init();
 	Led_IO_Init();
-  TIM_Config();
+//  TIM_Config();
 	USART1_Init();
 	
 	Ymodem_Receive(au8_test);
+	JumpToApp();
+	
 	
 	app_elog_init();
 	
 	log_a("Hello LiXin");
 	
   Delay(10);
-  //JumpToApp();
+  
   /* Infinite loop */
   while (1)
   {
