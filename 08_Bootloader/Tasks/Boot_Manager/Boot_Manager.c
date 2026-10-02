@@ -1,8 +1,12 @@
 #include "Boot_Manager.h"
 #include "main.h"
+#include "Flash.h"
 
 uint32_t JumpAddress;
+int32_t app_size = 0;
 
+
+//完成从bootloader到APP的安全跳转
 void JumpToApp(void)
 {
     /* 检查栈顶地址是否合法 */
@@ -30,3 +34,34 @@ void JumpToApp(void)
         Jump_To_Application();
     }
 }
+
+
+
+
+//将MCU接收的固件写入备份区
+int8_t BackToApp(void)
+{
+    int32_t j = 0;
+    uint32_t FlashDestination = ApplicationAddress;
+    uint32_t BackflashSource;
+    if ((app_size > (0x18000 - 1)) ||\
+        (app_size < 0))
+    {
+        return -1;
+    }
+    BackflashSource = BackApplicationAddress;
+    for (j = 0;j < app_size; j+= 4)
+    {
+      Flash_Write(FlashDestination,*(uint32_t*)BackflashSource);
+      if (*(uint32_t*)FlashDestination != *(uint32_t*)BackflashSource)
+      {
+        return -1;
+      }
+      FlashDestination += 4;
+      BackflashSource += 4;
+    }
+    return 0;
+}
+
+
+

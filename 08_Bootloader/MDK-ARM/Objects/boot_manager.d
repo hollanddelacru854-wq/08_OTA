@@ -31,3 +31,4 @@
 .\objects\boot_manager.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_wwdg.h
 .\objects\boot_manager.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\misc.h
 .\objects\boot_manager.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_flash_ramfunc.h
+.\objects\boot_manager.o: ..\Core\Inc\Flash.h

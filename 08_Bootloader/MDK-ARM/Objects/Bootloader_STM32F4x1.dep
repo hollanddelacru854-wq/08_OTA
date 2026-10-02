@@ -1,6 +1,6 @@
 Dependencies for Project 'Bootloader', Target 'STM32F4x1': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
-F (..\Core\Src\main.c)(0x6ABA6B84)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\Core\Src\main.c)(0x6ABBC111)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (..\Core\Inc\main.h)(0x6675C3C8)
 I (..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6675C3C9)
 I (..\Drivers\CMSIS\Include\core_cm4.h)(0x6675C37A)
@@ -38,7 +38,7 @@ I (..\Middlewares\easylogger\inc\elog.h)(0x67EBF7E2)
 I (..\Middlewares\easylogger\inc\elog_cfg.h)(0x67EC0915)
 I (D:\Keil5\ARM\ARMCC\include\stddef.h)(0x6025237E)
 I (D:\Keil5\ARM\ARMCC\include\stdbool.h)(0x6025237C)
-I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x67EC2BC1)
+I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x6ABBBFDB)
 I (..\Core\Inc\USART.h)(0x67ED4998)
 I (..\Core\Inc\Flash.h)(0x6ABA65EA)
 I (..\Middlewares\Ymodem\Ymodem.h)(0x67ED5AF6)
@@ -1069,8 +1069,8 @@ I (D:\Keil5\ARM\ARMCC\include\stdlib.h)(0x60252374)
 I (D:\Keil5\ARM\ARMCC\include\stdarg.h)(0x60252376)
 I (D:\Keil5\ARM\ARMCC\include\stdint.h)(0x6025237E)
 F (..\Middlewares\Rtt\SEGGER_RTT.h)(0x669A1160)()
-F (..\Tasks\Boot_Manager\Boot_Manager.c)(0x67EC32F1)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\boot_manager.o --omf_browse .\objects\boot_manager.crf --depend .\objects\boot_manager.d)
-I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x67EC2BC1)
+F (..\Tasks\Boot_Manager\Boot_Manager.c)(0x6ABBBF7E)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\boot_manager.o --omf_browse .\objects\boot_manager.crf --depend .\objects\boot_manager.d)
+I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x6ABBBFDB)
 I (..\Core\Inc\main.h)(0x6675C3C8)
 I (..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6675C3C9)
 I (..\Drivers\CMSIS\Include\core_cm4.h)(0x6675C37A)
@@ -1101,7 +1101,8 @@ I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x6675C3CE)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_wwdg.h)(0x6675C3CE)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\misc.h)(0x6675C3CD)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_flash_ramfunc.h)(0x6675C3CD)
-F (..\Middlewares\Ymodem\ymodem.c)(0x6ABA6DC5)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\ymodem.o --omf_browse .\objects\ymodem.crf --depend .\objects\ymodem.d)
+I (..\Core\Inc\Flash.h)(0x6ABA65EA)
+F (..\Middlewares\Ymodem\ymodem.c)(0x6ABBC57C)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\ymodem.o --omf_browse .\objects\ymodem.crf --depend .\objects\ymodem.d)
 I (..\Middlewares\Ymodem\common.h)(0x6ABA681D)
 I (D:\Keil5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (D:\Keil5\ARM\ARMCC\include\string.h)(0x6025237E)
@@ -1135,9 +1136,9 @@ I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h)(0x6675C3CE)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_wwdg.h)(0x6675C3CE)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\misc.h)(0x6675C3CD)
 I (..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_flash_ramfunc.h)(0x6675C3CD)
-I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x67EC2BC1)
-I (..\Core\Inc\Flash.h)(0x6ABA65EA)
+I (..\Tasks\Boot_Manager\Boot_Manager.h)(0x6ABBBFDB)
 I (..\Core\Inc\main.h)(0x6675C3C8)
+I (..\Core\Inc\Flash.h)(0x6ABA65EA)
 F (..\Middlewares\Ymodem\common.c)(0x67ED5AD9)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ..\MDK-ARM -I ..\Core\Inc -I ..\Drivers\STM32F4xx_StdPeriph_Driver\inc -I ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include -I ..\Drivers\CMSIS\Include -I ..\Middlewares\easylogger\inc -I ..\Tasks\Debug -I ..\Middlewares\Rtt -I ..\Tasks\Boot_Manager -I ..\Middlewares\Ymodem-ID:\Keil5\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -DSTM32F411xE-o .\objects\common.o --omf_browse .\objects\common.crf --depend .\objects\common.d)
 I (..\Middlewares\Ymodem\common.h)(0x6ABA681D)
 I (D:\Keil5\ARM\ARMCC\include\stdio.h)(0x60252374)

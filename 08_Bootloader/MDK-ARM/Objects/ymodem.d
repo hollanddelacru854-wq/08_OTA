@@ -35,5 +35,5 @@
 .\objects\ymodem.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\misc.h
 .\objects\ymodem.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_flash_ramfunc.h
 .\objects\ymodem.o: ..\Tasks\Boot_Manager\Boot_Manager.h
-.\objects\ymodem.o: ..\Core\Inc\Flash.h
 .\objects\ymodem.o: ..\Core\Inc\main.h
+.\objects\ymodem.o: ..\Core\Inc\Flash.h

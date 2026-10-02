@@ -66,40 +66,81 @@ int main(void)
   
 	
   /* Add your application code here */
-  /* Insert 50 ms delay */
-  Delay(50);
 	Key_IO_Init();
 	Led_IO_Init();
 //  TIM_Config();
 	USART1_Init();
 	
-	Ymodem_Receive(au8_test);
-	JumpToApp();
-	
 	
 	app_elog_init();
+	log_a("This is Bootloader!");
 	
-	log_a("Hello LiXin");
 	
-  Delay(10);
-  
-  /* Infinite loop */
-  while (1)
-  {
-		//如果是按下，则Led翻转
-		if(Key_Scan())
+	//检测到按键按下，接收固件写入备份区
+	if(Key_Scan())
+	{
+		Ymodem_Receive(au8_test);
+		
+		if(0 == BackToApp())
 		{
-			//log_a("LED ON");
-			USART_SendChar(USART1,'A');
-			LED_ON;
+			JumpToApp();
 		}
 		else
 		{
-			USART_SendChar(USART1,'B');
-			//log_a("LED OFF");
-			LED_OFF;
+			//数据并未成功写入备份区，进入下面的while循环阻塞等待按键按下再次尝试写入
 		}
 	}
+	else
+	{
+		JumpToApp();
+	}
+	
+	
+  
+  /* Infinite loop */
+  //阻塞等待按键按下再次尝试写入
+  while (1)
+  {
+	  
+	log_e("No Valid App,Please press key and download new App!");
+    if(Key_Scan())
+	{
+		Ymodem_Receive(au8_test);
+		
+		if(0 == BackToApp())
+		{
+			JumpToApp();
+		}
+		else
+		{
+		  //
+		}
+	}
+	else
+	{
+		JumpToApp();
+	}
+    Delay(50);
+	  
+	  
+	  
+	  
+	  
+	  
+//		//如果是按下，则Led翻转
+//		if(Key_Scan())
+//		{
+//			//log_a("LED ON");
+//			USART_SendChar(USART1,'A');
+//			LED_ON;
+//		}
+//		else
+//		{
+//			USART_SendChar(USART1,'B');
+//			//log_a("LED OFF");
+//			LED_OFF;
+//		}
+  }
 }
 
 /**

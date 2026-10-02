@@ -33,14 +33,14 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint8_t file_name[FILE_NAME_LENGTH];
-uint32_t FlashDestination = ApplicationAddress; 
+uint32_t FlashDestination = BackApplicationAddress; 	//备份区地址
 uint16_t PageSize = PAGE_SIZE;
 uint32_t EraseCounter = 0x0;
 uint32_t NbrOfPage = 0;
 FLASH_Status FLASHStatus = FLASH_COMPLETE;
 uint32_t RamSource;
 extern uint8_t tab_1024[1024];
-
+extern int32_t app_size;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -150,7 +150,7 @@ int32_t Ymodem_Receive (uint8_t *buf)
   int32_t i, j, packet_length, session_done, file_done, packets_received, errors, session_begin, size = 0;
 
   /* Initialize FlashDestination variable */
-  FlashDestination = ApplicationAddress;
+  FlashDestination = BackApplicationAddress;
 
   for (session_done = 0, errors = 0, session_begin = 0; ;)//初始化变量，进入循环
   {
@@ -196,7 +196,7 @@ int32_t Ymodem_Receive (uint8_t *buf)
                     }
                     file_size[i++] = '\0';
                     Str2Int(file_size, &size);
-
+					app_size = size;
                     /* Test the size of the image to be sent */
                     /* Image size is greater than Flash size */
                     if (size > (FLASH_SIZE - 1))
@@ -220,7 +220,8 @@ int32_t Ymodem_Receive (uint8_t *buf)
                     // }
 					
 					//接收完文件名和文件大小后，擦除flash区域（接收完首帧后擦除）
-					if(1 == Flash_erase(ApplicationAddress,size))
+					//改成擦除备份区
+					if(1 == Flash_erase(BackApplicationAddress,size))
                     {
 					
 						Send_Byte(CA);
@@ -243,9 +244,10 @@ int32_t Ymodem_Receive (uint8_t *buf)
                 else
                 {
 				  //将接收到新固件写入flash
+				  //改成写入备份区
                   memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
                   RamSource = (uint32_t)buf;
-                  for (j = 0;(j < packet_length) && (FlashDestination <  ApplicationAddress + size);j += 4)
+                  for (j = 0;(j < packet_length) && (FlashDestination <  BackApplicationAddress + size);j += 4)
                   {
                     /* Program the data received into STM32F10x Flash */
 //                    FLASH_ProgramWord(FlashDestination, *(uint32_t*)RamSource);
