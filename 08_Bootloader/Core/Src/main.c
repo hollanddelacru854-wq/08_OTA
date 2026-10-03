@@ -46,6 +46,7 @@ RCC_ClocksTypeDef RCC_Clocks;
   * @param  None
   * @retval None
   */
+int32_t fil_size = 0;
 uint8_t au8_test[1024]; 
 int main(void)
 {
@@ -79,9 +80,9 @@ int main(void)
 	//检测到按键按下，接收固件写入备份区
 	if(Key_Scan())
 	{
-		Ymodem_Receive(au8_test);
+		fil_size = Ymodem_Receive(au8_test);
 		
-		if(0 == BackToApp())
+		if(0 == BackToApp(fil_size))
 		{
 			JumpToApp();
 		}
@@ -105,9 +106,9 @@ int main(void)
 	log_e("No Valid App,Please press key and download new App!");
     if(Key_Scan())
 	{
-		Ymodem_Receive(au8_test);
+		fil_size = Ymodem_Receive(au8_test);
 		
-		if(0 == BackToApp())
+		if(0 == BackToApp(fil_size))
 		{
 			JumpToApp();
 		}

@@ -13,6 +13,7 @@ typedef  void (*pFunction)(void);
 #define BackApplicationAddress      0x8020000
 /* Exported functions ------------------------------------------------------- */
 void JumpToApp(void);
-int8_t BackToApp(void);
+//int8_t BackToApp(void);
+int8_t BackToApp(int32_t fl_size);
 #endif /* __BOOT_MANAGER_H */
 

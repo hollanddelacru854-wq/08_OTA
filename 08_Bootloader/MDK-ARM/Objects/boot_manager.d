@@ -32,3 +32,6 @@
 .\objects\boot_manager.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\misc.h
 .\objects\boot_manager.o: ..\Drivers\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_flash_ramfunc.h
 .\objects\boot_manager.o: ..\Core\Inc\Flash.h
+.\objects\boot_manager.o: ..\Middlewares\AES\AES.h
+.\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h

@@ -223,7 +223,7 @@ uint32_t SerialKeyPressed(uint8_t *key)
 *******************************************************************************/
 uint8_t GetKey(void)
 {
-    uint8_t key = 0;
+//    uint8_t key = 0;
 
     //等待按键按下
     // while (IS_TIMEOUT_1MS(eTim2, 6000))
