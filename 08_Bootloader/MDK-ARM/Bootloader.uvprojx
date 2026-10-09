@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\easylogger\inc;..\Tasks\Debug;..\Middlewares\Rtt;..\Tasks\Boot_Manager;..\Middlewares\Ymodem;..\Middlewares\AES</IncludePath>
+              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\easylogger\inc;..\Tasks\Debug;..\Middlewares\Rtt;..\Tasks\Boot_Manager;..\Middlewares\Ymodem;..\Middlewares\AES;..\Bsp\W25Qxx</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -417,6 +417,16 @@
               <FileName>Flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\Flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>Spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\Spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>Spi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\Inc\Spi.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1718,6 +1728,21 @@
               <FileName>AES.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Middlewares\AES\AES.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\W25Qxx\w25qxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Bsp\W25Qxx\w25qxx.h</FilePath>
             </File>
           </Files>
         </Group>

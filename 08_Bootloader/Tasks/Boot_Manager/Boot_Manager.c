@@ -87,8 +87,7 @@ int8_t BackToApp(int32_t fl_size)
   }
 
   //校验
-  if ((app_size > (0x18010 - 1)) ||\
-      (app_size < 0))
+  if ((app_size > (0x18010 - 1)) || (app_size < 0))
   {
     return -1;
   }

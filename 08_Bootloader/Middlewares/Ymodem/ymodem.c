@@ -197,8 +197,9 @@ int32_t Ymodem_Receive (uint8_t *buf)
                     file_size[i++] = '\0';
                     Str2Int(file_size, &size);
 					app_size = size;
-                    /* Test the size of the image to be sent */
-                    /* Image size is greater than Flash size */
+                    
+					
+					
                     if (size > (FLASH_SIZE - 1))
                     {
                       /* End session */

@@ -1,39 +1,13 @@
-/******************************************************************************
- * Copyright (C) 2024 EternalChip, Inc.(Gmbh) or its affiliates.
- * 
- * All Rights Reserved.
- * 
- * @file Flash.c
- * 
- * @par dependencies 
- * - Flash.h
- * 
- * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
- * 
- * @brief Functions related to reading and writing in the chip's flash area.
- * 
- * Processing flow:
- * 
- * call directly.
- * 
- * @version V1.0 2024-09-13
- *
- * @note 1 tab == 4 spaces!
- * 
- *****************************************************************************/
-/* Includes ------------------------------------------------------------------*/
 #include "Flash.h"
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-static uint16_t STMFLASH_GetFlashSector(u32 addr);
-/* Private functions ---------------------------------------------------------*/
-/* extern variables ---------------------------------------------------------*/
 
-const uint32_t Flash_Sectorsize[12] = \
-{   FLASH_Sector_0, //Sector1
+
+static uint16_t STMFLASH_GetFlashSector(u32 addr);
+
+
+//Flash的扇区
+const uint32_t Flash_Sectorsize[12] = {
+	
+	FLASH_Sector_0, //Sector1
     FLASH_Sector_1, //Sector2
     FLASH_Sector_2, //Sector3
     FLASH_Sector_3, //Sector4
@@ -45,19 +19,17 @@ const uint32_t Flash_Sectorsize[12] = \
     FLASH_Sector_9, //Sector10
     FLASH_Sector_10, //Sector11
     FLASH_Sector_11  //Sector12
+	
 };
 
-/**
- * @brief  This function is used to erase the flash area.
- * @param  None
- * @retval 0 ： Success
- *         1 ： Fail
- */
+
+
+//将App代码的所有涉及到的扇区全部擦除
 uint8_t Flash_erase(u32 addr,u32 size)
 {
-    //将App代码的所有涉及到的扇区全部擦除
+    
 
-    /*判断size在几个扇区内*/
+    //判断APP代码的size在几个扇区内
 //    FLASH_Status ret = 1;
     uint32_t flash_start_sector = 0;
     uint32_t flash_end_sector = 0;
@@ -68,11 +40,14 @@ uint8_t Flash_erase(u32 addr,u32 size)
     {
         if((Flash_Sectorsize[i]) >= flash_start_sector && (Flash_Sectorsize[i]) <= flash_end_sector)
         {
+			//每次擦除完扇区后进行校验
             if(EreaseAppSector(Flash_Sectorsize[i]) != FLASH_COMPLETE) return 1;
         }
     }
     return 0;
 }
+
+
 
 //通过地址获取扇区位置
 static uint16_t STMFLASH_GetFlashSector(u32 addr)
@@ -89,16 +64,25 @@ static uint16_t STMFLASH_GetFlashSector(u32 addr)
     else if(addr<ADDR_FLASH_SECTOR_10)return FLASH_Sector_9;
     else if(addr<ADDR_FLASH_SECTOR_11)return FLASH_Sector_10; 
     return FLASH_Sector_11; 
+	
 }
 
+
+//解锁Flash
 void Flash_Unlock(void) {
+	
     FLASH_Unlock();
     while (FLASH_GetStatus() == FLASH_BUSY);
+	
 }
 
+
+//锁住Flash（互斥锁？）
 void Flash_Lock(void) {
     FLASH_Lock();
 }
+
+
 
 //擦除APP区域的数据
 // f4是按扇区操作，计划将app放在扇区6  FLASH_Sector_6，备份app放在扇区7
@@ -110,6 +94,8 @@ FLASH_Status EreaseAppSector(uint32_t FLASH_Sector)
     return FLASHStatus;
 }
 
+
+//将APP代码写入Flash
 void Flash_Write(uint32_t address, uint32_t data) {
     // 解锁Flash
     Flash_Unlock();

@@ -15,6 +15,8 @@
 #include "USART.h"
 #include "Flash.h"
 #include "Ymodem.h"
+#include "Spi.h"
+#include "w25qxx.h"
 // 全局定义 STM32F411xE 或者 STM32F401xx
 // 当前定义 STM32F411xE
 
@@ -75,6 +77,13 @@ int main(void)
 	
 	app_elog_init();
 	log_a("This is Bootloader!");
+	
+	SPI1_Init();
+    if(W25Qx_Init() == 0)
+	{
+		log_a("w25q init ok!");
+	}
+	
 	
 	
 	//检测到按键按下，接收固件写入备份区
