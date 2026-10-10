@@ -6,10 +6,9 @@ extern volatile uint32_t SysTickUptime;
 #define get_tick() SysTickUptime
 
 W25Qx_Parameter W25Qx_Para;
-/**
-  * @brief  Initializes the W25QXXXX interface.
-  * @retval None
-  */
+
+
+//W25Q≥ı ºªØ
 uint8_t W25Qx_Init(void)
 { 
 	uint8_t state;

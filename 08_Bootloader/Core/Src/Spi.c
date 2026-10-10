@@ -96,6 +96,7 @@ u8 SPI1_ReadWriteByte(u8 WriteData)
     return SPI_I2S_ReceiveData(SPI1); //返回通过SPI接收的数据
 }
 
+
 u8 SPI1_WriteByte(u8 *WriteData, u16 dataSize, u32 timeout)
 {
     u32 time = timeout;
@@ -128,6 +129,7 @@ u8 SPI1_WriteByte(u8 *WriteData, u16 dataSize, u32 timeout)
     SPI_I2S_ClearFlag(SPI1,SPI_I2S_FLAG_OVR);
     return 1;
 }
+
 
 u8 SPI1_ReadByte(u8 *ReadData, u16 dataSize, u32 timeout)
 {

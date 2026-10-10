@@ -1744,6 +1744,16 @@
               <FileType>5</FileType>
               <FilePath>..\Bsp\W25Qxx\w25qxx.h</FilePath>
             </File>
+            <File>
+              <FileName>w25qxx_Handler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\W25Qxx\w25qxx_Handler.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx_Handler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Bsp\W25Qxx\w25qxx_Handler.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -1,4 +1,3 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __W25QXX_H
 #define __W25QXX_H
 
@@ -6,40 +5,12 @@
  extern "C" {
 #endif 
 
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
-//#include "cmsis_os.h"
+
 #include "spi.h"
 	 
-/** @addtogroup BSP
-  * @{
-  */ 
 
-/** @addtogroup Components
-  * @{
-  */ 
-  
-/** @addtogroup W25QXXXX
-  * @{
-  */
-
-/** @defgroup W25QXXXX_Exported_Types
-  * @{
-  */
-   
-/**
-  * @}
-  */ 
-
-/** @defgroup W25QXXXX_Exported_Constants
-  * @{
-  */
-   
-/** 
-  * @brief  W25QXX Configuration  
-  */  
-	
-/* W25Q32 */
 #define W25QXXXX_FLASH_SIZE                  0x0400000 /* 32 MBits => 4MBytes */
 #define W25QXXXX_SECTOR_COUNT                0x40      /* 64 sectors of 64KBytes */
 #define W25QXXXX_SECTOR_SIZE                 0x10000   /* 64 sectors of 64KBytes */
@@ -149,29 +120,9 @@ uint8_t W25Qx_Erase_Block(uint32_t Address);
 uint8_t W25Qx_Erase_Chip(void);
 
 uint8_t W25Qx_Get_Parameter(W25Qx_Parameter *Para);
-/**
-  * @}
-  */
-  
-/** @defgroup W25QXXXX_Exported_Functions
-  * @{
-  */ 
-/**
-  * @}
-  */ 
-      
-/**
-  * @}
-  */ 
 
-/**
-  * @}
-  */ 
 
-/**
-  * @}
-  */
-  
+
 #ifdef __cplusplus
 }
 #endif

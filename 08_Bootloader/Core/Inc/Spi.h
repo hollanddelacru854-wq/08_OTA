@@ -1,27 +1,4 @@
-/******************************************************************************
- * Copyright (C) 2024 EternalChip, Inc.(Gmbh) or its affiliates.
- * 
- * All Rights Reserved.
- * 
- * @file Spi.h
- * 
- * @par dependencies 
- * - Spi.h
- * 
- * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
- * 
- * @brief Functions related to reading and writing in the chip's flash area.
- * 
- * Processing flow:
- * 
- * call directly.
- * 
- * @version V1.0 2024-09-13
- *
- * @note 1 tab == 4 spaces!
- * 
- *****************************************************************************/
-/* Define to prevent recursive inclusion -------------------------------------*/
+
 #ifndef __SPI_H
 #define __SPI_H
 /* Includes ------------------------------------------------------------------*/
