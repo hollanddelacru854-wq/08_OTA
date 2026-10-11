@@ -35,3 +35,10 @@
 .\objects\boot_manager.o: ..\Middlewares\AES\AES.h
 .\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\boot_manager.o: ..\Bsp\W25Qxx\w25qxx_Handler.h
+.\objects\boot_manager.o: ..\Bsp\W25Qxx\w25qxx.h
+.\objects\boot_manager.o: ..\Core\Inc\spi.h
+.\objects\boot_manager.o: ..\Middlewares\easylogger\inc\elog.h
+.\objects\boot_manager.o: ..\Middlewares\easylogger\inc\elog_cfg.h
+.\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdbool.h

@@ -1,3 +1,9 @@
+
+//BSP层中原生驱动，对外提供实现某个小功能的函数，即调用硬件层、HAL层接口实现某个特定的功能
+//但是该工程使用的是标准库，没有HAL层
+
+
+
 #include "w25qxx.h"
 
 extern volatile uint32_t SysTickUptime;

@@ -37,3 +37,4 @@
 .\objects\ymodem.o: ..\Tasks\Boot_Manager\Boot_Manager.h
 .\objects\ymodem.o: ..\Core\Inc\main.h
 .\objects\ymodem.o: ..\Core\Inc\Flash.h
+.\objects\ymodem.o: ..\Bsp\W25Qxx\w25qxx_Handler.h

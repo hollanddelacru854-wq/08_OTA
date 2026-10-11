@@ -23,11 +23,14 @@
   * @{
   */ 
   
-/* Includes ------------------------------------------------------------------*/
+//发送新固件的通信协议
+
+
 #include "common.h"
 #include "stm32f4xx_flash.h"
 #include "Boot_Manager.h"
 #include "Flash.h"
+#include "w25qxx_Handler.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -222,13 +225,13 @@ int32_t Ymodem_Receive (uint8_t *buf)
 					
 					//接收完文件名和文件大小后，擦除flash区域（接收完首帧后擦除）
 					//改成擦除备份区
-					if(1 == Flash_erase(BackApplicationAddress,size))
-                    {
-					
-						Send_Byte(CA);
-                        Send_Byte(CA);
-						return -1;
-					}
+//					if(1 == Flash_erase(BackApplicationAddress,size))
+//                    {
+//					
+//						Send_Byte(CA);
+//                        Send_Byte(CA);
+//						return -1;
+//					}
 					Send_Byte(ACK);
                     Send_Byte(CRC16);
                   }
@@ -244,27 +247,31 @@ int32_t Ymodem_Receive (uint8_t *buf)
                 /* Data packet */
                 else
                 {
-				  //将接收到新固件写入flash
-				  //改成写入备份区
-                  memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
-                  RamSource = (uint32_t)buf;
-                  for (j = 0;(j < packet_length) && (FlashDestination <  BackApplicationAddress + size);j += 4)
-                  {
-                    /* Program the data received into STM32F10x Flash */
-//                    FLASH_ProgramWord(FlashDestination, *(uint32_t*)RamSource);
-					Flash_Write(FlashDestination,*(uint32_t*)RamSource);
-                    if (*(uint32_t*)FlashDestination != *(uint32_t*)RamSource)
-                    {
-                      /* End session */
-                      Send_Byte(CA);
-                      Send_Byte(CA);
-                      return -2;
-                    }
-                    FlashDestination += 4;
-                    RamSource += 4;
-                  }
-                  Send_Byte(ACK);
-                }
+//				  //将接收到新固件写入flash
+//				  //改成写入备份区
+//                  memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
+//                  RamSource = (uint32_t)buf;
+//                  for (j = 0;(j < packet_length) && (FlashDestination <  BackApplicationAddress + size);j += 4)
+//                  {
+//                    /* Program the data received into STM32F10x Flash */
+////                    FLASH_ProgramWord(FlashDestination, *(uint32_t*)RamSource);
+//					Flash_Write(FlashDestination,*(uint32_t*)RamSource);
+//                    if (*(uint32_t*)FlashDestination != *(uint32_t*)RamSource)
+//                    {
+//                      /* End session */
+//                      Send_Byte(CA);
+//                      Send_Byte(CA);
+//                      return -2;
+//                    }
+//                    FlashDestination += 4;
+//                    RamSource += 4;
+					
+					//改成写入外部Flash
+					memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
+					W25Q64_WriteData(buf_ptr,packet_length);
+					Send_Byte(ACK);
+				}
+				
                 packets_received ++;
                 session_begin = 1;
               }

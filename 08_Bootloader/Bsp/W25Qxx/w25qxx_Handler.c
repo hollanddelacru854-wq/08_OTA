@@ -1,38 +1,18 @@
-/******************************************************************************
- * Copyright (C) 2024 EternalChip, Inc.(Gmbh) or its affiliates.
- * 
- * All Rights Reserved.
- * 
- * @file W25Q_Handler.c
- * 
- * @par dependencies 
- * - W25Q_Handler.h
- * 
- * @author Jack | R&D Dept. | EternalChip 立芯嵌入式
- * 
- * @brief Functions related to reading and writing in the chip's flash area.
- * 
- * Processing flow:
- * 
- * call directly.
- * 
- * @version V1.0 2024-09-13
- *
- * @note 1 tab == 4 spaces!
- * 
- *****************************************************************************/
-/* Includes ------------------------------------------------------------------*/
+
+//Handler层具体实现，即便于管理BSP层中的原生驱动。
+//针对具体需求设计，利用driver向外提供的接口实现具体的业务逻辑
+
+
+
 #include "w25qxx_Handler.h"
 #include "w25qxx.h"
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-static st_W25Q_Handler s_st_W25Q_Handler_1;
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-/* extern variables ---------------------------------------------------------*/
 
+
+static st_W25Q_Handler s_st_W25Q_Handler_1;
+
+
+
+//W35Q64初始化
 void W25Q64_Init(void)
 {
     W25Qx_Init();
@@ -42,6 +22,7 @@ void W25Q64_Init(void)
     s_st_W25Q_Handler_1.write_index = 0;
     s_st_W25Q_Handler_1.write_sector_index = 0;
 }
+
 
 u8 W25Q64_EraseChip(void)
 {
@@ -57,6 +38,8 @@ u8 W25Q64_EraseChip(void)
     return 1;
 }
 
+
+//数据满4K再进行写入
 u8 W25Q64_WriteData(u8 *data, u32 length)
 {
     u8 ret = 0;
@@ -64,10 +47,13 @@ u8 W25Q64_WriteData(u8 *data, u32 length)
     u16 index = 0;
     for(u16 i = 0; i < length; i++)
     {
+		
         //1.数据写入数据缓冲区里面
         index = s_st_W25Q_Handler_1.write_databuf_index;
         s_st_W25Q_Handler_1.databuf[index] = *(data + i);
         s_st_W25Q_Handler_1.write_databuf_index++;
+		
+		
         //2.判断数据有没有写满4096
         if(s_st_W25Q_Handler_1.write_databuf_index == W25Qx_Para.SUBSECTOR_SIZE)
         {
@@ -94,6 +80,8 @@ u8 W25Q64_WriteData(u8 *data, u32 length)
     return 0;
 }
 
+
+//最后一次写入（有可能不够4K）
 u8 W25Q64_WriteData_End(void)
 {
     u32 addr = 0;
@@ -134,6 +122,8 @@ u8 W25Q64_WriteData_End(void)
     return 0;
 }
 
+
+
 /*每次读取一个扇区的数据，外部接口需要一个4096的buffer
 length:每次读取出来的长度，从缓冲区读取
 return : 
@@ -141,6 +131,8 @@ return :
         1:读取完毕  没有数据了
         2:读取失败  读取错误
 */
+
+//每次读取4K数据，包括最后一次读取不够4K的数据的处理逻辑
 u8 W25Q64_ReadData(u8 *data, u16 *length)
 {
     u8 ret = 0;
@@ -178,3 +170,5 @@ u8 W25Q64_ReadData(u8 *data, u16 *length)
         return 1;
     }
 }
+
+

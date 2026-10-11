@@ -42,4 +42,4 @@
 .\objects\main.o: ..\Core\Inc\Flash.h
 .\objects\main.o: ..\Middlewares\Ymodem\Ymodem.h
 .\objects\main.o: ..\Core\Inc\Spi.h
-.\objects\main.o: ..\Bsp\W25Qxx\w25qxx.h
+.\objects\main.o: ..\Bsp\W25Qxx\w25qxx_Handler.h
