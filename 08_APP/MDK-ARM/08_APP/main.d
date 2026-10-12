@@ -28,6 +28,7 @@
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 08_app\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
@@ -42,6 +43,8 @@
 08_app\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 08_app\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 08_app\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+08_app\main.o: ../Core/Inc/spi.h
 08_app\main.o: ../Core/Inc/usart.h
 08_app\main.o: ../Core/Inc/gpio.h
-08_app\main.o: ..\BSP\AT24Cxx_Driver\AT24Cxx_Driver\AT24Cxx_Driver.h
+08_app\main.o: ../BSP/AT24Cxx_Driver/AT24Cxx_Driver/AT24Cxx_Driver.h
+08_app\main.o: ..\BSP\W25q\Driver\w25qxx.h
