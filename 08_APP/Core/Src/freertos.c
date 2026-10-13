@@ -26,6 +26,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "gpio.h"
+#include "usart.h"
+#include "queue.h"
+#include "ymodem.h"
+#include "OTA.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +51,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+QueueHandle_t Q_YmodemReclength;
 
+extern osThreadAttr_t OTA_task_attributes;
+extern osThreadId_t OTA_taskHandle;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -88,6 +97,9 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+	
+  Q_YmodemReclength = xQueueCreate(1,sizeof(uint16_t));
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -96,6 +108,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  OTA_taskHandle = osThreadNew(ota_task_runnable, NULL, &OTA_task_attributes);
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -111,19 +125,74 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
+//uint8_t rec_len = 0;
+uint8_t rec_cmd[10] = {0};
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+	
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rec_cmd, 10);
+	
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	HAL_GPIO_WritePin(Led_GPIO_Port, Led_Pin, GPIO_PIN_RESET);
+    osDelay(500);
+	HAL_GPIO_WritePin(Led_GPIO_Port, Led_Pin, GPIO_PIN_SET);
+    osDelay(500);
+	  
+//	if(rec_len !=0)
+//    {
+//       for(uint8_t i = 0; i< rec_len; i++)
+//       {
+//         HAL_UART_Transmit(&huart1,&rec_cmd[i],1,10);
+//       }
+//       rec_len = 0;
+//       HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rec_cmd, 10);
+//     }
+//	  
+	  
   }
   /* USER CODE END StartDefaultTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+
+extern DMA_HandleTypeDef hdma_usart1_rx;
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  UNUSED(huart);
+  UNUSED(Size);
+  uint16_t t_u16_rec_len = 0;
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+  //判断是串口1
+  if (huart->Instance == USART1)
+  {
+      //获取剩余当前传输值
+			if(1 == __HAL_UART_GET_FLAG(huart,UART_FLAG_IDLE))
+			{
+				t_u16_rec_len = Size;
+			}
+        if(pdFALSE != xQueueSendFromISR(Q_YmodemReclength,&t_u16_rec_len,0))
+		{
+			xHigherPriorityTaskWoken = pdTRUE;
+		}
+		HAL_UART_DMAStop(huart);
+	}
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+      // DMA 传输完成后的操作
+}
+
+
+
+
+
+
+
+
 
 /* USER CODE END Application */
 

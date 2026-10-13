@@ -43,3 +43,12 @@
 08_app\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 08_app\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 08_app\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+08_app\freertos.o: ../Core/Inc/gpio.h
+08_app\freertos.o: ../Core/Inc/usart.h
+08_app\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
+08_app\freertos.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\freertos.o: ..\Middlewares\Common\common.h
+08_app\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+08_app\freertos.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
+08_app\freertos.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\freertos.o: ..\User\APP\OTA.h
