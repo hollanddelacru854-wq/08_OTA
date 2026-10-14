@@ -11,7 +11,7 @@ static uint16_t s_u16_YmodRecLength;
 
 
 
-  
+//通过串口+DMA接收一个字节
 //改用串口+DMA进行新固件的接收
 static int32_t Receive_Byte(uint8_t *c, uint16_t length, uint32_t timeout)
 {
@@ -24,11 +24,7 @@ static int32_t Receive_Byte(uint8_t *c, uint16_t length, uint32_t timeout)
   return -1;
 }
 
-/**
-  * @brief  Send a byte
-  * @param  c: Character
-  * @retval 0: Byte sent
-  */
+//通过串口发送一个字节
 static uint32_t Send_Byte (uint8_t c)
 {
   //todo：后续添加
@@ -37,18 +33,7 @@ static uint32_t Send_Byte (uint8_t c)
   return 0;
 }
 
-/**
-  * @brief  Receive a packet from sender
-  * @param  data
-  * @param  length
-  * @param  timeout
-  *     0: end of transmission
-  *    -1: abort by sender
-  *    >0: packet length
-  * @retval 0: normally return
-  *        -1: timeout or packet error
-  *         1: abort by user
-  */
+//接收一整个数据包（接收一个缓冲区）
 static int32_t Receive_Packet (uint8_t *data, int32_t *length, uint32_t timeout)
 {
   uint16_t packet_size;
@@ -99,11 +84,7 @@ static int32_t Receive_Packet (uint8_t *data, int32_t *length, uint32_t timeout)
   return 0;
 }
 
-/**
-  * @brief  Receive a file using the ymodem protocol
-  * @param  buf: Address of the first byte
-  * @retval The size of the file
-  */
+//整个固件的接收逻辑
 uint8_t file_size[FILE_SIZE_LENGTH], *file_ptr;
 int32_t i, packet_length, session_done, file_done, packets_received, errors, session_begin, size = 0;
 int32_t Ymodem_Receive (uint8_t *buf1)

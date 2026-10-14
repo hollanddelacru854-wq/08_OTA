@@ -51,3 +51,4 @@
 08_app\ota.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 08_app\ota.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
 08_app\ota.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\ota.o: ../Core/Inc/gpio.h
