@@ -40,6 +40,7 @@
 "08_app\at24cxx_driver.o"
 "08_app\iic.o"
 "08_app\w25qxx.o"
+"08_app\w25q_handler.o"
 "08_app\ymodem.o"
 "08_app\common.o"
 "08_app\ota.o"

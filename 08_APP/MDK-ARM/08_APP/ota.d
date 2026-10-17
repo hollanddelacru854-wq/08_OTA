@@ -51,4 +51,7 @@
 08_app\ota.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 08_app\ota.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
 08_app\ota.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\ota.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 08_app\ota.o: ../Core/Inc/gpio.h
+08_app\ota.o: ..\BSP\W25q\Handler\W25Q_Handler.h
+08_app\ota.o: ../BSP/AT24Cxx_Driver/AT24Cxx_Driver/AT24Cxx_Driver.h

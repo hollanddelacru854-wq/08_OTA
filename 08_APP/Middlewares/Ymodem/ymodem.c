@@ -5,7 +5,14 @@
 uint8_t file_name[FILE_NAME_LENGTH];
 uint32_t RamSource;
 
+//传递新固件长度的队列
 extern QueueHandle_t Q_YmodemReclength;
+
+//传递新固件的队列
+extern QueueHandle_t Queue_AppDataBuffer;
+
+//信号量（保证一个数据包的互斥访问）
+extern SemaphoreHandle_t Semaphore_ExtFlashState;
 
 static uint16_t s_u16_YmodRecLength;
 
@@ -87,7 +94,8 @@ static int32_t Receive_Packet (uint8_t *data, int32_t *length, uint32_t timeout)
 //整个固件的接收逻辑
 uint8_t file_size[FILE_SIZE_LENGTH], *file_ptr;
 int32_t i, packet_length, session_done, file_done, packets_received, errors, session_begin, size = 0;
-int32_t Ymodem_Receive (uint8_t *buf1)
+
+int32_t Ymodem_Receive (uint8_t *buf1, uint8_t *buf2)
 {
   uint8_t *packet_data;
   packet_data = buf1;
@@ -110,7 +118,7 @@ int32_t Ymodem_Receive (uint8_t *buf1)
               Send_Byte(ACK);
               file_done = 1;
               break;
-            /* Normal packet */
+            //接收到正常的数据包
             default:
               if ((packet_data[PACKET_SEQNO_INDEX] & 0xff) != (packets_received & 0xff))
               {
@@ -123,26 +131,43 @@ int32_t Ymodem_Receive (uint8_t *buf1)
                   /* Filename packet */
                   if (packet_data[PACKET_HEADER] != 0)
                   {
-                    /* Filename packet has valid data */
+					//解析文件名
+					  
                     for (i = 0, file_ptr = packet_data + PACKET_HEADER; (*file_ptr != 0) && (i < FILE_NAME_LENGTH);)
                     {
                       file_name[i++] = *file_ptr++;
                     }
                     file_name[i++] = '\0';
-                    //获取文件大小
+					
+                    //解析文件大小
                     for (i = 0, file_ptr ++; (*file_ptr != ' ') && (i < FILE_SIZE_LENGTH);)
                     {
                       file_size[i++] = *file_ptr++;
                     }
                     file_size[i++] = '\0';
-                    Str2Int(file_size, &size);
-                    //size = (uint32_t)atoi((char *)file_size);
-                    //需要擦除某些W25q的扇区，根据size的大小决定
-                    //TODO:通知，不做任何处理
+                    Str2Int(file_size, &size);			//将表示文件大小的字符串转化为整型数字
+                    
+					int32_t * pu32_size = &size;
+					
+					//发送新固件的长度（给写入外部Flash的任务）
+					xQueueSend(Queue_AppDataBuffer,&pu32_size,0);
+					
+					//切换缓冲区
+					if(packet_data == buf1)
+                    {
+                      packet_data = buf2;
+                    }
+                    else
+                    {
+                      packet_data = buf1;
+                    }
+					
+					
                     Send_Byte(ACK);
                     Send_Byte(CRC16);
                   }
-                  /* Filename packet is empty, end session */
+                  
+				  //文件名为空，会话结束
                   else
                   {
                     Send_Byte(ACK);
@@ -154,6 +179,29 @@ int32_t Ymodem_Receive (uint8_t *buf1)
                 /* Data packet */
                 else
                 {
+				  /*数据处理*/
+				  
+				  //跳过数据包头
+				  packet_data += PACKET_HEADER;
+                  xQueueSend(Queue_AppDataBuffer, &packet_data, 0);
+				  packet_data -= PACKET_HEADER;
+									
+					
+                  xSemaphoreTake(Semaphore_ExtFlashState,portMAX_DELAY);
+                  xSemaphoreGive(Semaphore_ExtFlashState);
+
+                  if(packet_data == buf1)
+                  {
+                    packet_data = buf2;
+                  }
+                  else
+                  {
+                    packet_data = buf1;
+					
+				  }
+					
+					
+					
                   Send_Byte(ACK);
                 }
                 packets_received ++;
@@ -191,6 +239,7 @@ int32_t Ymodem_Receive (uint8_t *buf1)
     }
   }
   return (int32_t)size;
+
 }
 
 /**

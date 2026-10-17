@@ -48,3 +48,4 @@
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 08_app\common.o: ..\Middlewares\Common\common.h
+08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h

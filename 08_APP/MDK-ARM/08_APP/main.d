@@ -48,4 +48,4 @@
 08_app\main.o: ../Core/Inc/usart.h
 08_app\main.o: ../Core/Inc/gpio.h
 08_app\main.o: ../BSP/AT24Cxx_Driver/AT24Cxx_Driver/AT24Cxx_Driver.h
-08_app\main.o: ../BSP/W25q/Driver/w25qxx.h
+08_app\main.o: ..\BSP\W25q\Handler\W25Q_Handler.h

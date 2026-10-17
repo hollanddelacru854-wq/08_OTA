@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "AT24Cxx_Driver.h"
-#include "w25qxx.h"
+#include "W25Q_Handler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,7 +100,7 @@ int main(void)
 	
   ee_CheckOk();
   
-  W25Qx_Init();
+  W25Q64_Init();
   
   /* USER CODE END 2 */
 

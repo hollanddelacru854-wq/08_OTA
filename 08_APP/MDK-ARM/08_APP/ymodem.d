@@ -48,3 +48,4 @@
 08_app\ymodem.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 08_app\ymodem.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
 08_app\ymodem.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\ymodem.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
