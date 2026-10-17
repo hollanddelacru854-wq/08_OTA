@@ -131,7 +131,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
 	
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rec_cmd, 10);
+//	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, rec_cmd, 10);
 	
   /* Infinite loop */
   for(;;)
@@ -171,22 +171,22 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
   //判断是串口1
   if (huart->Instance == USART1)
   {
-      //获取剩余当前传输值
-			if(1 == __HAL_UART_GET_FLAG(huart,UART_FLAG_IDLE))
-			{
-				t_u16_rec_len = Size;
-			}
-        if(pdFALSE != xQueueSendFromISR(Q_YmodemReclength,&t_u16_rec_len,0))
+        //获取剩余当前传输值
+		if(1 == __HAL_UART_GET_FLAG(huart,UART_FLAG_IDLE))
 		{
-			xHigherPriorityTaskWoken = pdTRUE;
+			t_u16_rec_len = Size;
+		
+			if(pdFALSE != xQueueSendFromISR(Q_YmodemReclength,&t_u16_rec_len,0))
+			{
+				xHigherPriorityTaskWoken = pdTRUE;
+			}
+			HAL_UART_DMAStop(huart);	//停掉DMA
 		}
-		HAL_UART_DMAStop(huart);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//开始任务调度
+      
 	}
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-      // DMA 传输完成后的操作
+
 }
-
-
 
 
 

@@ -29,7 +29,7 @@ const osThreadAttr_t OTA_task_attributes = {
 };
 
 
-static int8_t Key_Scan();
+static int8_t Key_Scan(void);
 void SoftReset(void);
 
 
@@ -200,7 +200,7 @@ void ota_task_runnable(void *argument)
 
 
 
-static int8_t Key_Scan()
+static int8_t Key_Scan(void)
 {
   uint16_t t_u16_cnt = 0;
 
