@@ -1,4 +1,3 @@
-
 //1.从bootloader程序跳转到APP程序
 //2.将接收到的新固件进行解密
 
@@ -14,7 +13,10 @@
 #include "Gpio.h"
 #include "ymodem.h"
 
-
+int8_t ExA_To_ExB_AES(int32_t fl_size);
+int8_t ExB_To_App(void);
+int8_t ExA_To_App(void);
+int8_t App_To_ExA(int32_t fl_size);
 
 //接收数据的缓冲区
 uint8_t au8_test[1024]; 
@@ -51,35 +53,6 @@ void JumpToApp(void)
         Jump_To_Application();
     }
 }
-
-
-
-
-////将MCU接收的固件写入备份区
-//int8_t BackToApp(void)
-//{
-//    int32_t j = 0;
-//    uint32_t FlashDestination = ApplicationAddress;
-//    uint32_t BackflashSource;
-//    if ((app_size > (0x18000 - 1)) ||\
-//        (app_size < 0))
-//    {
-//        return -1;
-//    }
-//    BackflashSource = BackApplicationAddress;
-//    for (j = 0;j < app_size; j+= 4)
-//    {
-//      Flash_Write(FlashDestination,*(uint32_t*)BackflashSource);
-//      if (*(uint32_t*)FlashDestination != *(uint32_t*)BackflashSource)
-//      {
-//        return -1;
-//      }
-//      FlashDestination += 4;
-//      BackflashSource += 4;
-//    }
-//    return 0;
-//}
-
 
 
 
@@ -189,17 +162,31 @@ void OTA_StateManager(void)
       if(Key_Scan())
       {
         //按下
-        /*1.下载到外部flash的A区*/
+        //1.下载到外部flash的A区
         fil_size = Ymodem_Receive(au8_test);
-        /*2.解密数据拷贝到外部flashB区中*/
-        //if(0 == BackToApp(fil_size))
-        // {
-        //   JumpToApp();
-        // }
-        // else
-        // {
-        //   //
-        // }
+		  
+		//2.将外部Flash的A区中的加密固件解密并搬运到B区
+		if(0 == ExA_To_ExB_AES(fil_size))
+        {
+		  
+			//3.将B区的解密固件搬运到内部Flash（先读APP的大小）
+			ee_ReadBytes((uint8_t *)&t_u32_appsize,0x05,4);
+            App_To_ExA(t_u32_appsize);
+			//4.将当前APP运行区中的固件搬运到外部Flash的A区
+			ExB_To_App();
+			//5.跳转到APP运行区
+			JumpToApp();
+			
+			ExA_To_App();
+			
+			JumpToApp();
+        }
+        else
+        {
+          log_a("Boot dowload failed");
+          JumpToApp();
+        }
+		  
       }
       else
       {
@@ -226,7 +213,203 @@ void OTA_StateManager(void)
     /*No action*/
     break;
   }
+  
 }
+
+
+//外部flashA区中数据搬运到App区中（回滚时）
+//逻辑：擦除Flash数据，读取数据，循环写入数据，校验
+int8_t ExA_To_App(void)
+{
+  u32 FlashDes = ApplicationAddress;
+  u32 flashsize = 0;
+  u8  Read_dataState = 0;
+  u16 Read_Memorysize = 0;
+  u32 RamSource = 0;
+  u16 writeTime=0;
+	
+  //擦除本地flash数据（要先拿到固件大小）
+  flashsize = Read_BlockSize(BLOCK_1);
+  if(1 == Flash_erase(FlashDes,flashsize))
+  {
+    return -1;
+  }
+  else
+  {
+    for(;;)
+    {
+      Read_dataState = W25Q64_ReadData(BLOCK_1,Mem_Read_buffer,&Read_Memorysize);
+      if(1 == Read_dataState)
+      {
+        //数据读完退出
+        break;
+      }
+      else if(2 == Read_dataState)
+      {
+        //外部flash数据读取有问题
+        break;
+      }
+      else
+      {
+        RamSource = (u32)Mem_Read_buffer;
+        //循环搬运flash数据
+        for(writeTime = 0; writeTime < (Read_Memorysize/4);writeTime++)
+        {
+          Flash_Write(FlashDes,RamSource);
+          FlashDes += 4;
+          RamSource += 4;
+        }
+      }
+    }
+    return flashsize;
+  }
+}
+
+
+//外部Flash的B区搬运到APP运行区
+int8_t ExB_To_App(void)
+{
+  u32 FlashDes = ApplicationAddress;
+  u32 flashsize = 0;
+  u8  Read_dataState = 0;
+  u16 Read_Memorysize = 0;
+  u32 RamSource = 0;
+  u16 writeTime=0;
+  /*擦除本地flash数据*/
+  flashsize = Read_BlockSize(BLOCK_2);
+  if(1 == Flash_erase(FlashDes,flashsize))
+  {
+    return -1;
+  }
+  else
+  {
+    for(;;)
+    {
+      Read_dataState = W25Q64_ReadData(BLOCK_2,Mem_Read_buffer,&Read_Memorysize);
+      if(1 == Read_dataState)
+      {
+        //数据读完退出
+        break;
+      }
+      else if(2 == Read_dataState)
+      {
+        //外部flash数据读取有问题
+        break;
+      }
+      else
+      {
+        RamSource = (u32)Mem_Read_buffer;
+        //循环搬运flash数据
+        for(writeTime = 0; writeTime < (Read_Memorysize/4);writeTime++)
+        {
+          Flash_Write(FlashDes,RamSource);
+          FlashDes += 4;
+          RamSource += 4;
+        }
+      }
+    }
+    return flashsize;
+  }
+}
+
+
+//APP运行区的数据搬运到外部Flash的A区（备份上一个版本）
+int8_t App_To_ExA(int32_t fl_size)
+{
+  u32 FlashDes = ApplicationAddress;
+  if ((fl_size > (0x18010 - 1)) ||\
+  (fl_size < 0))
+  {
+    return -1;
+  }
+
+  Erase_Flash_Block(BLOCK_1);
+  W25Q64_WriteData(BLOCK_1,(uint8_t *)FlashDes,fl_size);
+  W25Q64_WriteData_End(BLOCK_1);
+	return 0;
+}
+
+
+//外部Flash中A区加密固件搬运到外部Flash中B区
+int8_t ExA_To_ExB_AES(int32_t fl_size)
+{
+  u8 Temp[16];  //原密文数据缓存
+  u16 readTime=0,readDataCount=0;   //读取数据再解密的次数（每次解密16个字节）
+  u32 AppSize=0;  //升级包的大小
+  u16 Read_Memory_Size=0;
+  u32 Read_Memory_index=0;
+  uint8_t *pu8_IV_IN_OUT = IV;
+  uint8_t *pu8_key256bit = Key;
+	
+	
+  if(fl_size <= 0)
+  {
+    return -1;
+  }
+  if ((app_size > (0x18010 - 1)) || (app_size < 0))
+  {
+    return -1;
+  }
+  
+  //先读一帧，用来解析头文件格式
+  W25Q64_ReadData(BLOCK_1, Mem_Read_buffer,&Read_Memory_Size);
+  if(Read_Memory_Size  >= 16)
+  {
+    memcpy(Temp,Mem_Read_buffer,16);
+    Aes_IV_key256bit_Decode(pu8_IV_IN_OUT,Temp,pu8_key256bit);//解析得到自定义内容+文件大小
+    AppSize=(Temp[15]<<24)+(Temp[14]<<16)+(Temp[13]<<8)+Temp[12];
+    log_d("AppSize=%d",AppSize);
+    
+    //计算升级包读取次数
+    readDataCount=AppSize/16;
+    if(AppSize%16!=0)
+    {
+      readDataCount+=1;
+    }
+    Read_Memory_index += 16;
+  }
+  else
+  {
+    return -1;
+  }
+
+  //擦除外部flash比较耗时
+  for(readTime=0;readTime<readDataCount;readTime++)
+  {
+    //判断下当前buffer下的数据是否读取完毕
+    if(Read_Memory_index == Read_Memory_Size)
+    {
+      if(2 == W25Q64_ReadData(BLOCK_1, Mem_Read_buffer,&Read_Memory_Size))
+      {
+        log_d("Write_Flash_After_AES_Decode read extern buffer error");
+        return -1;
+      }
+      Read_Memory_index = 0;
+    }
+    //拷贝16个数据
+    memcpy(Temp,Mem_Read_buffer + Read_Memory_index,16);
+    Read_Memory_index += 16;
+    //解析16个数据
+    Aes_IV_key256bit_Decode(pu8_IV_IN_OUT,Temp,pu8_key256bit);//解析
+    
+    W25Q64_WriteData(BLOCK_2,Temp,16);
+  }
+  W25Q64_WriteData_End(BLOCK_2);
+  log_d("Write_Flash_After_AES_Decode end");
+  return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

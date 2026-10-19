@@ -10,6 +10,13 @@
 static st_W25Q_Handler s_ast_W25Q_Handler[2];
 
 
+//返回固件大小
+uint32_t Read_BlockSize(u8 block_index)
+{
+    return s_ast_W25Q_Handler[block_index].write_index;
+}
+
+
 
 //W35Q64初始化
 void W25Q64_Init(void)
@@ -27,6 +34,19 @@ void W25Q64_Init(void)
     s_ast_W25Q_Handler[1].write_index = 0;
     s_ast_W25Q_Handler[1].write_sector_index = 0;
 }
+
+
+//重新初始化外部Flash的A区或B区中的参数
+void Erase_Flash_Block(u8 block_index)
+{
+	s_ast_W25Q_Handler[block_index].read_index = 0;
+	s_ast_W25Q_Handler[block_index].read_sector_index = 0;
+	s_ast_W25Q_Handler[block_index].write_databuf_index = 0;
+	s_ast_W25Q_Handler[block_index].write_index = 0;
+	s_ast_W25Q_Handler[block_index].write_sector_index = 0;
+}
+
+
 
 //W25Q64芯片擦除
 u8 W25Q64_EraseChip(void)
