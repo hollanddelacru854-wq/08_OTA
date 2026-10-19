@@ -43,3 +43,4 @@
 .\objects\main.o: ..\Middlewares\Ymodem\Ymodem.h
 .\objects\main.o: ..\Core\Inc\Spi.h
 .\objects\main.o: ..\Bsp\W25Qxx\w25qxx_Handler.h
+.\objects\main.o: ..\Bsp\AT24Cxx_Driver\AT24Cxx_Driver.h

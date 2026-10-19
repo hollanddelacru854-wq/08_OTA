@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\easylogger\inc;..\Tasks\Debug;..\Middlewares\Rtt;..\Tasks\Boot_Manager;..\Middlewares\Ymodem;..\Middlewares\AES;..\Bsp\W25Qxx</IncludePath>
+              <IncludePath>..\MDK-ARM;..\Core\Inc;..\Drivers\STM32F4xx_StdPeriph_Driver\inc;..\Drivers\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\CMSIS\Include;..\Middlewares\easylogger\inc;..\Tasks\Debug;..\Middlewares\Rtt;..\Tasks\Boot_Manager;..\Middlewares\Ymodem;..\Middlewares\AES;..\Bsp\W25Qxx;..\Bsp\AT24Cxx_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1753,6 +1753,26 @@
               <FileName>w25qxx_Handler.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Bsp\W25Qxx\w25qxx_Handler.h</FilePath>
+            </File>
+            <File>
+              <FileName>AT24Cxx_Driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\AT24Cxx_Driver\AT24Cxx_Driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>AT24Cxx_Driver.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Bsp\AT24Cxx_Driver\AT24Cxx_Driver.h</FilePath>
+            </File>
+            <File>
+              <FileName>iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Bsp\AT24Cxx_Driver\iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>iic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Bsp\AT24Cxx_Driver\iic.h</FilePath>
             </File>
           </Files>
         </Group>

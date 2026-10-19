@@ -17,6 +17,7 @@
 #include "Ymodem.h"
 #include "Spi.h"
 #include "w25qxx_Handler.h"
+#include "AT24Cxx_Driver.h"
 // 全局定义 STM32F411xE 或者 STM32F401xx
 // 当前定义 STM32F411xE
 
@@ -80,6 +81,7 @@ int main(void)
 	
 	SPI1_Init();
 	W25Q64_Init();
+	ee_CheckOk();
 //    if(W25Qx_Init() == 0)
 //	{
 //		log_a("w25q init ok!");
