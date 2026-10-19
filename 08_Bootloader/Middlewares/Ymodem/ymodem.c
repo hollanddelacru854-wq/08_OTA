@@ -268,7 +268,7 @@ int32_t Ymodem_Receive (uint8_t *buf)
 					
 					//改成写入外部Flash
 					memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
-					W25Q64_WriteData(buf_ptr,packet_length);
+					W25Q64_WriteData(BLOCK_1, buf_ptr,packet_length);
 					Send_Byte(ACK);
 				}
 				

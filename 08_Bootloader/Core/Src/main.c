@@ -49,8 +49,8 @@ RCC_ClocksTypeDef RCC_Clocks;
   * @param  None
   * @retval None
   */
-int32_t fil_size = 0;
-uint8_t au8_test[1024]; 
+//int32_t fil_size = 0;
+//uint8_t au8_test[1024]; 
 int main(void)
 {
 	/* Enable Clock Security System(CSS): this will generate an NMI exception
@@ -82,31 +82,7 @@ int main(void)
 	SPI1_Init();
 	W25Q64_Init();
 	ee_CheckOk();
-//    if(W25Qx_Init() == 0)
-//	{
-//		log_a("w25q init ok!");
-//	}
-//	
-	
-	
-	//检测到按键按下，接收固件写入备份区
-	if(Key_Scan())
-	{
-		fil_size = Ymodem_Receive(au8_test);
-		
-		if(0 == BackToApp(fil_size))
-		{
-			JumpToApp();
-		}
-		else
-		{
-			//数据并未成功写入备份区，进入下面的while循环阻塞等待按键按下再次尝试写入
-		}
-	}
-	else
-	{
-		JumpToApp();
-	}
+
 	
 	
   
@@ -115,26 +91,26 @@ int main(void)
   while (1)
   {
 	  
-	log_e("No Valid App,Please press key and download new App!");
-    if(Key_Scan())
-	{
-		fil_size = Ymodem_Receive(au8_test);
-		
-		if(0 == BackToApp(fil_size))
-		{
-			JumpToApp();
-		}
-		else
-		{
-		  //
-		}
-	}
-	else
-	{
-		JumpToApp();
-	}
-    Delay(50);
-	  
+//	log_e("No Valid App,Please press key and download new App!");
+//    if(Key_Scan())
+//	{
+//		fil_size = Ymodem_Receive(au8_test);
+//		
+//		if(0 == BackToApp(fil_size))
+//		{
+//			JumpToApp();
+//		}
+//		else
+//		{
+//		  //
+//		}
+//	}
+//	else
+//	{
+//		JumpToApp();
+//	}
+//    Delay(50);
+//	  
 	  
 	  
 	  

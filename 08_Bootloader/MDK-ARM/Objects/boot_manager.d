@@ -42,3 +42,6 @@
 .\objects\boot_manager.o: ..\Middlewares\easylogger\inc\elog_cfg.h
 .\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\boot_manager.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\boot_manager.o: ..\Bsp\AT24Cxx_Driver\AT24Cxx_Driver.h
+.\objects\boot_manager.o: ..\Core\Inc\Gpio.h
+.\objects\boot_manager.o: ..\Middlewares\Ymodem\ymodem.h

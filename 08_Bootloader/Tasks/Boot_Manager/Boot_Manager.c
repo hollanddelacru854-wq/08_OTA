@@ -10,6 +10,14 @@
 #include "w25qxx_Handler.h"
 #include "w25qxx.h"
 #include "elog.h"
+#include "AT24Cxx_Driver.h"
+#include "Gpio.h"
+#include "ymodem.h"
+
+
+
+//接收数据的缓冲区
+uint8_t au8_test[1024]; 
 
 uint32_t JumpAddress;
 int32_t app_size = 0;
@@ -105,7 +113,7 @@ int8_t BackToApp(int32_t fl_size)
       return -1;
     }
     //先读一帧，用来解析头文件格式（从外部Flash中读取获得新固件）
-    W25Q64_ReadData(Mem_Read_buffer,&Read_Memory_Size);
+    W25Q64_ReadData(BLOCK_2, Mem_Read_buffer, &Read_Memory_Size);
     if(Read_Memory_Size  >= 16)
     {
       memcpy(Temp,Mem_Read_buffer,16);
@@ -132,7 +140,7 @@ int8_t BackToApp(int32_t fl_size)
         //判断下当前buffer下的数据是否读取完毕
         if(Read_Memory_index == Read_Memory_Size)
         {
-          if(2 == W25Q64_ReadData(Mem_Read_buffer,&Read_Memory_Size))
+          if(2 == W25Q64_ReadData(BLOCK_2, Mem_Read_buffer,&Read_Memory_Size))
           {
             log_d("Write_Flash_After_AES_Decode read extern buffer error");
             return -1;
@@ -166,84 +174,62 @@ int8_t BackToApp(int32_t fl_size)
 
 
 
+//OTA状态机
+void OTA_StateManager(void)
+{
+  uint8_t t_u8_otastate = NO_APP_UPDATE;
+  uint32_t t_u32_appsize = 0;
+  int32_t fil_size = 0;
+  /*读eeprom的OTA状态*/
+  ee_ReadBytes(&t_u8_otastate,0x00,1);
+
+  switch(t_u8_otastate)
+  {
+    case NO_APP_UPDATE:
+      if(Key_Scan())
+      {
+        //按下
+        /*1.下载到外部flash的A区*/
+        fil_size = Ymodem_Receive(au8_test);
+        /*2.解密数据拷贝到外部flashB区中*/
+        //if(0 == BackToApp(fil_size))
+        // {
+        //   JumpToApp();
+        // }
+        // else
+        // {
+        //   //
+        // }
+      }
+      else
+      {
+        JumpToApp();
+      }
+    break;
+
+    case APP_DOWNLOADING:
+      log_a("App dowload failed");
+      JumpToApp();
+
+      //跳转失败，下载新App
+
+    break;
+
+    case APP_DOWNLOAD_COMPLETE:
+      //读取当前需要更新的App的大小
+      ee_ReadBytes((uint8_t *)&t_u32_appsize,0x01,4);
+
+      //解密搬运数据
+    break;
+
+    default:
+    /*No action*/
+    break;
+  }
+}
 
 
 
-
-
-
-
-
-
-
-
-
-////使用AES加密算法库实现新固件解密（备份区中的新的加密固件），并将新固件写入运行区
-//unsigned char IV[16]={0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32};  
-//unsigned char Key[32]={0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,\
-//                       0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32,0x31,0X32};
-//int8_t BackToApp(int32_t fl_size)
-//{
-//  uint32_t AppRunFlashDestination = ApplicationAddress;
-//  uint8_t *pu8_IV_IN_OUT = IV;
-//  uint8_t *pu8_key256bit = Key;
-//  uint8_t *pu8_temp = (uint8_t *)BackApplicationAddress;  //原始数据
-//  uint8_t Temp[16];  //原密文数据缓存
-//  uint8_t *pTemp = Temp;
-//  uint16_t readTime=0,readDataCount=0;   //读取数据再解密的次数（每次解密16个字节
-//  u32 AppSize=0;  //升级包的大小
-
-//  if(fl_size <= 0)
-//  {
-//    return -1;
-//  }
-
-//  //校验
-//  if ((app_size > (0x18010 - 1)) || (app_size < 0))
-//  {
-//    return -1;
-//  }
-//  
-//  memcpy(pTemp,pu8_temp,16);
-//  pu8_temp += 16;
-//  Aes_IV_key256bit_Decode(pu8_IV_IN_OUT,pTemp,pu8_key256bit);//解析得到自定义内容+文件大小
-//  AppSize=(pTemp[15]<<24)+(pTemp[14]<<16)+(pTemp[13]<<8)+pTemp[12];
-
-//  /*计算需要解密多少次*/
-//  readDataCount=AppSize/16;
-//  if(AppSize%16!=0)
-//  {
-//    readDataCount+=1;
-//  }
-
-//  //擦除运行区数据
-//  if(1 == Flash_erase(ApplicationAddress,AppSize))
-//  {
-//    return -1;
-//  }
-//  
-//  //读数据的总次数
-//  for(readTime=0;readTime<readDataCount;readTime++)
-//  {
-//    //加密原文读取16个字节到临时区中
-//    pTemp = Temp;
-//    memcpy(pTemp,pu8_temp,16);
-//    pu8_temp += 16;
-//    Aes_IV_key256bit_Decode(pu8_IV_IN_OUT,pTemp,pu8_key256bit);//解密数据
-//    //解密后的数据存入App运行区中（每次搬运完进行校验）
-//    for (uint8_t j = 0;j < 16; j+= 4)
-//    {
-//      Flash_Write(AppRunFlashDestination,*(uint32_t*)pTemp);
-//      if (*(uint32_t*)AppRunFlashDestination != *(uint32_t*)pTemp)
-//      {
-//        return -1;
-//      }
-//      AppRunFlashDestination += 4;
-//      pTemp += 4;
-//    }
-//  }
-//  return 0;
-//}
 
 
 
