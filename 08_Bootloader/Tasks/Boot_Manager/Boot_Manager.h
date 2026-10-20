@@ -24,11 +24,14 @@ typedef  void (*pFunction)(void);
 
 void JumpToApp(void);
 
-
+int8_t ExA_To_ExB_AES(int32_t fl_size);
+int8_t ExB_To_App(void);
+int8_t ExA_To_App(void);
+int8_t App_To_ExA(int32_t fl_size);
 
 int8_t BackToApp(int32_t fl_size);
 
-
+void OTA_StateManager(void);
 
 #endif
 

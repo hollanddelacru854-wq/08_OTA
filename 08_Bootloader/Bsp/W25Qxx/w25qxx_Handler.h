@@ -25,9 +25,10 @@ typedef struct
 
 #define BLOCK_1         0
 #define BLOCK_2         1
-#define BLOCK_SIZE      0xFFFF
+#define BLOCK_SIZE      0x1000
 
 
+void SetBlockParmeter(u8 block_index,uint32_t app_size);
 uint32_t Read_BlockSize(u8 block_index);
 void W25Q64_Init(void);
 void Erase_Flash_Block(u8 block_index);

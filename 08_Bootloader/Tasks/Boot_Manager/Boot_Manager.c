@@ -13,10 +13,7 @@
 #include "Gpio.h"
 #include "ymodem.h"
 
-int8_t ExA_To_ExB_AES(int32_t fl_size);
-int8_t ExB_To_App(void);
-int8_t ExA_To_App(void);
-int8_t App_To_ExA(int32_t fl_size);
+
 
 //接收数据的缓冲区
 uint8_t au8_test[1024]; 
@@ -39,7 +36,7 @@ void JumpToApp(void)
         __disable_irq();
         NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x8000);
         RCC_DeInit();
-        /* 用户代码区第二个 字 为程序开始地址(复位地址) */
+        /* 用户代码区第二个字为程序开始地址(复位地址) */
         JumpAddress = *(__IO uint32_t *) (ApplicationAddress + 4);
 
         /* Initialize user application's Stack Pointer */
@@ -148,12 +145,21 @@ int8_t BackToApp(int32_t fl_size)
 
 
 //OTA状态机
+
+/*
+三种状态：
+1.没有APP更新（没有更新需求时重新上电，一般直接跳转到APP运行区）
+2.APP下载中（在新固件下载时重新上电）
+3.APP下载完成，请求更新APP（在新固件下载完后重新上电）
+
+*/
+
 void OTA_StateManager(void)
 {
   uint8_t t_u8_otastate = NO_APP_UPDATE;
   uint32_t t_u32_appsize = 0;
   int32_t fil_size = 0;
-  /*读eeprom的OTA状态*/
+  //从AT24C02中读OTA状态
   ee_ReadBytes(&t_u8_otastate,0x00,1);
 
   switch(t_u8_otastate)
@@ -161,7 +167,8 @@ void OTA_StateManager(void)
     case NO_APP_UPDATE:
       if(Key_Scan())
       {
-        //按下
+		//按下按键重新更新，不按下直接跳转到APP运行区
+		  
         //1.下载到外部flash的A区
         fil_size = Ymodem_Receive(au8_test);
 		  
@@ -177,6 +184,7 @@ void OTA_StateManager(void)
 			//5.跳转到APP运行区
 			JumpToApp();
 			
+			//回滚
 			ExA_To_App();
 			
 			JumpToApp();
@@ -195,22 +203,74 @@ void OTA_StateManager(void)
     break;
 
     case APP_DOWNLOADING:
+		
+	  //固件下载未完成时重新上电，先重新跳转回原代码
+	  //如果跳转失败，重新下载新固件
+	
+	  //尝试跳转
       log_a("App dowload failed");
       JumpToApp();
 
-      //跳转失败，下载新App
+      //跳转失败，重新下载新固件
+	  log_a("No Valid App");
 
+      fil_size = Ymodem_Receive(au8_test);
+      /*2.解密数据拷贝到外部flashB区中*/
+      if(0 == ExA_To_ExB_AES(fil_size))
+      {
+        /*3.当前App的数据搬运到外部flash的A区 ，增加一个代码回退功能*/
+        //读当前App的大小
+        ee_ReadBytes((uint8_t *)&t_u32_appsize,0x05,4);
+        App_To_ExA(t_u32_appsize);
+        /*4.外部flashB区的数据搬运到内部App区域中*/
+        ExB_To_App();
+        /*5.执行跳转逻辑*/
+        JumpToApp();
+        /*6.如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
+        ExA_To_App();
+        /*再执行一次跳转*/
+        JumpToApp();
+      }
+      else
+      {
+        log_a("Boot dowload failed");
+        JumpToApp();
+      }
     break;
 
     case APP_DOWNLOAD_COMPLETE:
       //读取当前需要更新的App的大小
       ee_ReadBytes((uint8_t *)&t_u32_appsize,0x01,4);
-
-      //解密搬运数据
-    break;
+	  //2.App大小更新到内部flash存储数据量的管理结构体中（重新上电后，固件的大小未知，需要更新底层结构体）
+      SetBlockParmeter(BLOCK_1,t_u32_appsize);
+      /*2.解密数据拷贝到外部flashB区中*/
+      if(0 == ExA_To_ExB_AES(fil_size))
+      {
+        /*3.当前App的数据搬运到外部flash的A区 ，增加一个代码回退功能*/
+        //读当前App的大小
+        ee_ReadBytes((uint8_t *)&t_u32_appsize,0x05,4);
+        App_To_ExA(t_u32_appsize);
+        /*4.外部flashB区的数据搬运到内部App区域中*/
+        ExB_To_App();
+        /*5.执行跳转逻辑*/
+        JumpToApp();
+        /*6.如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
+        ExA_To_App();
+        /*再执行一次跳转*/
+        JumpToApp();
+      }
+      else
+      {
+        log_a("Boot dowload failed");
+        JumpToApp();
+      }
+      
+	break;
+	
+    
 
     default:
-    /*No action*/
+    
     break;
   }
   
@@ -255,7 +315,7 @@ int8_t ExA_To_App(void)
         //循环搬运flash数据
         for(writeTime = 0; writeTime < (Read_Memorysize/4);writeTime++)
         {
-          Flash_Write(FlashDes,RamSource);
+          Flash_Write(FlashDes,*(u32 *)RamSource);
           FlashDes += 4;
           RamSource += 4;
         }
@@ -275,7 +335,8 @@ int8_t ExB_To_App(void)
   u16 Read_Memorysize = 0;
   u32 RamSource = 0;
   u16 writeTime=0;
-  /*擦除本地flash数据*/
+	
+  //擦除本地flash数据
   flashsize = Read_BlockSize(BLOCK_2);
   if(1 == Flash_erase(FlashDes,flashsize))
   {
@@ -302,7 +363,7 @@ int8_t ExB_To_App(void)
         //循环搬运flash数据
         for(writeTime = 0; writeTime < (Read_Memorysize/4);writeTime++)
         {
-          Flash_Write(FlashDes,RamSource);
+          Flash_Write(FlashDes,*(u32 *)RamSource);
           FlashDes += 4;
           RamSource += 4;
         }
@@ -317,8 +378,7 @@ int8_t ExB_To_App(void)
 int8_t App_To_ExA(int32_t fl_size)
 {
   u32 FlashDes = ApplicationAddress;
-  if ((fl_size > (0x18010 - 1)) ||\
-  (fl_size < 0))
+  if ((fl_size > (0x18010 - 1)) || (fl_size < 0))
   {
     return -1;
   }
@@ -398,22 +458,6 @@ int8_t ExA_To_ExB_AES(int32_t fl_size)
   log_d("Write_Flash_After_AES_Decode end");
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

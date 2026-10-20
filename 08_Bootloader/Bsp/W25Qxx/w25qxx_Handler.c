@@ -10,6 +10,16 @@
 static st_W25Q_Handler s_ast_W25Q_Handler[2];
 
 
+//更新内部结构体成员（重新上电时参数丢失，需要重新初始化关键参数）
+void SetBlockParmeter(u8 block_index,uint32_t app_size)
+{
+    s_ast_W25Q_Handler[block_index].write_index = app_size;
+    s_ast_W25Q_Handler[block_index].write_databuf_index = app_size % BLOCK_SIZE;
+    s_ast_W25Q_Handler[block_index].write_sector_index = app_size / BLOCK_SIZE;
+}
+
+
+
 //返回固件大小
 uint32_t Read_BlockSize(u8 block_index)
 {

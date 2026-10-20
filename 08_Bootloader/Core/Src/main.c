@@ -27,7 +27,7 @@
 /** @addtogroup Template_Project
   * @{
   */
-
+extern uint8_t au8_test[1024]; 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -75,6 +75,8 @@ int main(void)
 //  TIM_Config();
 	USART1_Init();
 	
+	int32_t fil_size = 0;
+    uint32_t t_u32_appsize = 0;
 	
 	app_elog_init();
 	log_a("This is Bootloader!");
@@ -83,52 +85,40 @@ int main(void)
 	W25Q64_Init();
 	ee_CheckOk();
 
-	
+	OTA_StateManager();
 	
   
   /* Infinite loop */
-  //阻塞等待按键按下再次尝试写入
+  //阻塞等待按键按下进行固件更新
   while (1)
   {
 	  
-//	log_e("No Valid App,Please press key and download new App!");
-//    if(Key_Scan())
-//	{
-//		fil_size = Ymodem_Receive(au8_test);
-//		
-//		if(0 == BackToApp(fil_size))
-//		{
-//			JumpToApp();
-//		}
-//		else
-//		{
-//		  //
-//		}
-//	}
-//	else
-//	{
-//		JumpToApp();
-//	}
-//    Delay(50);
-//	  
-	  
-	  
-	  
-	  
-	  
-//		//如果是按下，则Led翻转
-//		if(Key_Scan())
-//		{
-//			//log_a("LED ON");
-//			USART_SendChar(USART1,'A');
-//			LED_ON;
-//		}
-//		else
-//		{
-//			USART_SendChar(USART1,'B');
-//			//log_a("LED OFF");
-//			LED_OFF;
-//		}
+	log_e("No Valid App,Please press key and download new App!");
+    if(Key_Scan())
+    {
+      fil_size = Ymodem_Receive(au8_test);
+      /*2.解密数据拷贝到外部flashB区中*/
+      if(0 == ExA_To_ExB_AES(fil_size))
+      {
+        /*3.当前App的数据搬运到外部flash的A区 ，增加一个代码回退功能*/
+        //读当前App的大小
+        ee_ReadBytes((uint8_t *)&t_u32_appsize,0x05,4);
+        App_To_ExA(t_u32_appsize);
+        /*4.外部flashB区的数据搬运到内部App区域中*/
+        ExB_To_App();
+        /*5.执行跳转逻辑*/
+        JumpToApp();
+        /*6.如果运行到这一步，说明数据无效，把外部A区的数据搬运到App中*/
+        ExA_To_App();
+        /*再执行一次跳转*/
+        JumpToApp();
+      }
+      else
+      {
+        log_a("Boot dowload failed");
+        JumpToApp();
+      }
+    }
   }
 }
 
