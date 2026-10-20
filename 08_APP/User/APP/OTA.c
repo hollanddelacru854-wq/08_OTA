@@ -179,6 +179,7 @@ void ota_task_runnable(void *argument)
 
 			  //Test 
 			  uint8_t t_u8_readstate = 0;
+			  osDelay(10);
 			  ee_ReadBytes(&t_u8_readstate,0x00,1);
 			  HAL_UART_Transmit(&huart1,&t_u8_readstate,1,1000);
 
@@ -188,9 +189,10 @@ void ota_task_runnable(void *argument)
 
 
 			  //Test 
-			  uint8_t t_au8_readlength[4] = {0};
-			  ee_ReadBytes(t_au8_readlength,0x01,4);
-			  HAL_UART_Transmit(&huart1,t_au8_readlength,4,1000);
+			  uint8_t t_au8_readlength[sizeof(t_int32_app_data_length)] = {0};
+			  osDelay(10);
+			  ee_ReadBytes(t_au8_readlength,0x01,sizeof(t_int32_app_data_length));
+			  HAL_UART_Transmit(&huart1,t_au8_readlength,sizeof(t_int32_app_data_length),1000);
 				
 				
 			}

@@ -44,8 +44,8 @@
 08_app\ymodem.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 08_app\ymodem.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 08_app\ymodem.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-08_app\ymodem.o: ..\Middlewares\Common\common.h
+08_app\ymodem.o: ../Middlewares/Common/common.h
 08_app\ymodem.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 08_app\ymodem.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
-08_app\ymodem.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\ymodem.o: ../Middlewares/Ymodem/ymodem.h
 08_app\ymodem.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h

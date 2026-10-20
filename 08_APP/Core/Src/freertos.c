@@ -125,8 +125,6 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-//uint8_t rec_len = 0;
-uint8_t rec_cmd[10] = {0};
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
@@ -182,8 +180,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 			}
 			HAL_UART_DMAStop(huart);	//停掉DMA
 		}
-		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//开始任务调度
-      
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);//开始任务调度      
 	}
 
 }

@@ -2,7 +2,7 @@
 08_app\common.o: ..\Middlewares\Common\common.h
 08_app\common.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 08_app\common.o: D:\Keil5\ARM\ARMCC\Bin\..\include\string.h
-08_app\common.o: ..\Middlewares\Ymodem\ymodem.h
+08_app\common.o: ../Middlewares/Ymodem/ymodem.h
 08_app\common.o: ../Core/Inc/main.h
 08_app\common.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 08_app\common.o: ../Core/Inc/stm32f4xx_hal_conf.h
@@ -47,5 +47,5 @@
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-08_app\common.o: ..\Middlewares\Common\common.h
+08_app\common.o: ../Middlewares/Common/common.h
 08_app\common.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h

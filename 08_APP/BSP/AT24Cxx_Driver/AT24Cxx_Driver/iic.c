@@ -22,7 +22,7 @@ static void i2c_cfgGpio(void)
 /*写一个IIC总线位延时延时函数,根据下图AT24C02脉冲宽度的时间,工作环境168M,IIC速度最快400khz*/
 static void i2c_Delay(void)
 {
- uint8_t i;
+ volatile uint8_t i;
  for(i = 0; i < 40; i++);
 }
 
